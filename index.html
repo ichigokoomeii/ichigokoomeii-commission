@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小莓奶糖 COMMISSION</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍓</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/cwtexyen.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cherry-bg': '#FFF5F5',      /* 蕾絲櫻粉底色 */
+                        'cherry-card': '#FFFFFF',    /* 純白襯底 */
+                        'cherry-border': '#F3D1D6',  /* 玫瑰豆沙框 */
+                        'cherry-accent': '#FF94A2',  /* 暖櫻粉按鈕 */
+                        'cherry-accent-dark': '#E27483',
+                        'cherry-text': '#7A4F55',    /* 濃可可莓果文字 */
+                        'deco-pink': '#FFE3E7',    
+                    },
+                    fontFamily: { 
+                        sans: ['"cwTeXYen"', '"Microsoft JhengHei"', 'sans-serif'] 
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 花朵旋轉動畫 */
+        @keyframes flower-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .animate-flower { animation: flower-spin 4s infinite linear; }
+        
+        /* 網頁背景：清爽、不密集的純白大圓點矩陣 */
+        body {
+            background-color: #FFF5F5; 
+            background-image: radial-gradient(#FFFFFF 4px, transparent 4px); 
+            background-size: 40px 40px; 
+            background-position: 0 0;   
+            font-family: 'cwTeXYen', 'Microsoft JhengHei', sans-serif;
+            color: #7A4F55;
+            overflow-x: hidden;
+        }
+
+        /* 提示文字呼吸燈動畫 */
+        @keyframes hint-pulse {
+            0%, 100% { opacity: 0.7; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(-2px); }
+        }
+        .animate-hint { animation: hint-pulse 2.5s infinite ease-in-out; }
+
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* 票根圓弧波浪狀卡片樣式 */
+        .ticket-card { 
+            position: relative;
+            box-shadow: 0px 16px 32px rgba(243, 209, 214, 0.5);
+            border-left: 3px solid #F3D1D6;
+            border-right: 3px solid #F3D1D6;
+            padding-top: 3.5rem;
+            padding-bottom: 3.5rem;
+            min-height: 400px;
+            @media (min-width: 768px) {
+                min-height: 780px; /* 大幅撐高大卡片容納超大圖 */
+            }
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 4px;
+            overflow: visible; 
+        }
+
+        /* 頂部與底部的純 CSS 圓弧波浪鋸齒效果 */
+        .ticket-card::before, .ticket-card::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            width: 100%; 
+            height: 24px;
+            background-size: 24px 24px;
+            background-repeat: repeat-x;
+            z-index: 50; 
+        }
+
+        /* 頂部向內凹的大半圓弧線 */
+        .ticket-card::before {
+            top: -12px;
+            background-image: 
+                radial-gradient(circle at 12px 0px, #FFF5F5 8px, transparent 8.5px),
+                radial-gradient(circle at 12px 0px, transparent 8px, #F3D1D6 8.5px, #F3D1D6 11px, #FFFFFF 11.5px),
+                linear-gradient(to right, #F3D1D6 3px, transparent 3px),
+                linear-gradient(to left, #F3D1D6 3px, transparent 3px);
+        }
+
+        /* 底部向內凹的大半圓弧線 */
+        .ticket-card::after {
+            bottom: -12px;
+            background-image: 
+                radial-gradient(circle at 12px 24px, #FFF5F5 8px, transparent 8.5px),
+                radial-gradient(circle at 12px 24px, transparent 8px, #F3D1D6 8.5px, #F3D1D6 11px, #FFFFFF 11.5px),
+                linear-gradient(to right, #F3D1D6 3px, transparent 3px),
+                linear-gradient(to left, #F3D1D6 3px, transparent 3px);
+        }
+
+        /* 首頁底圖 */
+        .ticket-home-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.plurk.com/6bgBRsysBN7b9sUuRDzLOX.jpg');
+            background-repeat: no-repeat;
+            background-size: 120%; 
+            background-position: -85% 15%; 
+            opacity: 0.35;
+            z-index: 1;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 767px) {
+            .ticket-home-bg {
+                background-size: 200%;
+                background-position: 80% 20%;
+            }
+        }
+
+        .ticket-content {
+            position: relative;
+            z-index: 5;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 輪播圖轉場 */
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            height: 100%;
+        }
+        .carousel-slide {
+            flex: 0 0 100%;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-3 md:p-6 py-12 select-none">
+
+    <div class="fixed bottom-6 right-6 flex flex-col-reverse items-center gap-3 z-[9999]">
+        <button type="button" id="strawberryMenuBtn" class="w-12 h-12 rounded-full bg-white border-2 border-cherry-border shadow-md flex items-center justify-center transition-all duration-300 hover:border-cherry-accent hover:scale-110 active:scale-95 cursor-pointer relative z-10 group/btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-10 h-10 transform translate-y-0.5 group-hover/btn:rotate-12 transition-transform duration-300">
+                <path d="M42,28 C32,23 35,14 44,17 C46,18 47,22 46,26 Z" fill="#BBF7D0" stroke="#E27483" stroke-width="1.2" />
+                <path d="M58,28 C68,23 65,14 56,17 C54,18 53,22 54,26 Z" fill="#BBF7D0" stroke="#E27483" stroke-width="1.2" />
+                <path d="M50,15 C54,10 62,17 55,27 C52,24 48,24 45,27 C38,17 46,10 50,15 Z" fill="#A7F3D0" stroke="#E27483" stroke-width="1.5" />
+                <path d="M50,26 C68,26 78,42 72,62 C67,78 56,86 50,86 C44,86 33,78 28,62 C22,42 32,26 50,26 Z" fill="#FF94A2" stroke="#F3D1D6" stroke-width="2" />
+                <circle cx="44" cy="42" r="2" fill="#FFFFFF" opacity="0.9" />
+                <circle cx="56" cy="42" r="2" fill="#FFFFFF" opacity="0.9" />
+                <circle cx="50" cy="52" r="2" fill="#FFFFFF" opacity="0.9" />
+            </svg>
+        </button>
+        <div id="snsLinkContainer" class="flex flex-col gap-2 opacity-0 scale-75 translate-y-4 pointer-events-none transition-all duration-300">
+             <a href="https://discord.gg/GRWkGfWjd8" target="_blank" class="w-10 h-10 rounded-full bg-white border-2 border-cherry-border flex items-center justify-center shadow-sm transition-all duration-300 hover:border-cherry-accent hover:scale-110 group/item" title="前往 Discord">
+                <i class="fa-brands fa-discord text-cherry-text/70 group-hover/item:text-cherry-accent transition-colors text-base"></i>
+            </a>
+            <a href="https://x.com/meii_xox" target="_blank" class="w-10 h-10 rounded-full bg-white border-2 border-cherry-border flex items-center justify-center shadow-sm transition-all duration-300 hover:border-cherry-accent hover:scale-110 group/item" title="前往 X(Twitter)">
+                <i class="fa-brands fa-x-twitter text-cherry-text/70 group-hover/item:text-cherry-accent transition-colors text-base"></i>
+            </a>
+            <a href="https://www.plurk.com/Juu_" target="_blank" class="w-10 h-10 rounded-full bg-white border-2 border-cherry-border flex items-center justify-center shadow-sm transition-all duration-300 hover:border-cherry-accent hover:scale-110 group/item" title="前往 噗浪">
+                <span class="text-sm font-black text-cherry-text/70 group-hover/item:text-cherry-accent font-mono transition-colors">P</span>
+            </a>
+            <a href="https://www.threads.com/@miyali92" target="_blank" class="w-10 h-10 rounded-full bg-white border-2 border-cherry-border flex items-center justify-center shadow-sm transition-all duration-300 hover:border-cherry-accent hover:scale-110 group/item" title="前往 Threads">
+                <i class="fa-brands fa-threads text-cherry-text/70 group-hover/item:text-cherry-accent transition-colors text-base"></i>
+            </a>
+            <a href="https://www.facebook.com/wa.wa.869479" target="_blank" class="w-10 h-10 rounded-full bg-white border-2 border-cherry-border flex items-center justify-center shadow-sm transition-all duration-300 hover:border-cherry-accent hover:scale-110 group/item" title="前往 Facebook">
+                <i class="fa-brands fa-facebook text-cherry-text/70 group-hover/item:text-cherry-accent transition-colors text-base"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="max-w-[850px] w-full fade-in relative z-10 mb-8 px-1 md:px-4"> 
+        
+        <div class="ticket-card bg-white">
+            <div id="home-bg-layer" class="ticket-home-bg"></div>
+
+            <div id="page-home" class="ticket-content w-full flex flex-col items-center justify-center text-center p-6 min-h-[300px] md:min-h-[450px]">
+                <div class="space-y-4 bg-white/70 backdrop-blur-[2px] p-6 md:p-8 rounded-3xl border border-white/50 max-w-[90%] md:max-w-[70%] shadow-sm">
+                    <h1 class="text-3xl md:text-5xl font-bold tracking-wider text-cherry-text drop-shadow-sm">
+                        小莓奶糖
+                    </h1>
+                    <div class="w-20 h-[3px] bg-cherry-accent mx-auto my-3 rounded-full"></div>
+                    <p class="text-lg md:text-2xl font-semibold tracking-widest text-cherry-text/90 uppercase">
+                        COMMISSION
+                    </p>
+                </div>
+                <div class="mt-8 text-cherry-accent opacity-60 text-3xl animate-flower">
+                    <i class="fa-solid fa-asterisk"></i>
+                </div>
+            </div>
+
+            <div id="page-prices" class="ticket-content w-full hidden flex-col items-center justify-between h-full px-2 md:px-6 relative">
+                <h2 class="text-xl font-bold text-cherry-text mt-1 mb-2 tracking-wider"><i class="fa-solid fa-tags mr-2"></i>價目表展示</h2>
+                
+                <div class="relative w-full overflow-hidden rounded-2xl border border-cherry-border/40 bg-black/5 min-h-[450px] md:min-h-[680px] flex items-center justify-center">
+                    <div id="carouselTrack" class="carousel-track w-full">
+                        <div class="carousel-slide flex items-center justify-center"><img src="https://images.plurk.com/4p4I0N8GDiMGcDICtrdCRZ.jpg" alt="價目表 1" class="max-w-full md:max-w-[95%] max-h-full object-contain"></div>
+                        <div class="carousel-slide flex items-center justify-center"><img src="https://images.plurk.com/6XRWm0mZGEz267aRzKCLUQ.jpg" alt="價目表 2" class="max-w-full md:max-w-[95%] max-h-full object-contain"></div>
+                        <div class="carousel-slide flex items-center justify-center"><img src="https://images.plurk.com/2CG1BxcHq09nygJFbpHSX4.jpg" alt="價目表 3" class="max-w-full md:max-w-[95%] max-h-full object-contain"></div>
+                        <div class="carousel-slide flex items-center justify-center"><img src="https://images.plurk.com/PPAE2LW4jpuS03gH0KVcS.jpg" alt="價目表 4" class="max-w-full md:max-w-[95%] max-h-full object-contain"></div>
+                        <div class="carousel-slide flex items-center justify-center"><img src="https://images.plurk.com/74K68h5ctlifj11rbRmTgf.jpg" alt="價目表 5" class="max-w-full md:max-w-[95%] max-h-full object-contain"></div>
+                        <div class="carousel-slide flex items-center justify-center"><img src="https://images.plurk.com/3DhUOYOUPaxsVmnM0rcWeS.jpg" alt="價目表 6" class="max-w-full md:max-w-[95%] max-h-full object-contain"></div>
+                    </div>
+                </div>
+
+                <button id="prevBtn" class="absolute left-0.5 md:left-2 top-1/2 -translate-y-1/2 w-9 h-9 md:w-11 md:h-11 rounded-full bg-white/90 border border-cherry-border flex items-center justify-center text-cherry-text hover:bg-cherry-accent hover:text-white transition-all shadow-md z-20 active:scale-90">
+                    <i class="fa-solid fa-chevron-left text-sm md:text-base"></i>
+                </button>
+                <button id="nextBtn" class="absolute right-0.5 md:right-2 top-1/2 -translate-y-1/2 w-9 h-9 md:w-11 md:h-11 rounded-full bg-white/90 border border-cherry-border flex items-center justify-center text-cherry-text hover:bg-cherry-accent hover:text-white transition-all shadow-md z-20 active:scale-90">
+                    <i class="fa-solid fa-chevron-right text-sm md:text-base"></i>
+                </button>
+
+                <div class="flex gap-2 mt-3 mb-1" id="carouselDots">
+                    <span class="w-2.5 h-2.5 rounded-full bg-cherry-accent transition-all duration-300 cursor-pointer" data-index="0"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-cherry-border transition-all duration-300 cursor-pointer" data-index="1"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-cherry-border transition-all duration-300 cursor-pointer" data-index="2"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-cherry-border transition-all duration-300 cursor-pointer" data-index="3"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-cherry-border transition-all duration-300 cursor-pointer" data-index="4"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-cherry-border transition-all duration-300 cursor-pointer" data-index="5"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 md:gap-4 mt-8 w-full px-1">
+            <button id="nav-home" class="py-3.5 md:py-4 px-2 md:px-6 rounded-2xl bg-cherry-accent text-white font-medium shadow-md transition-all duration-300 hover:bg-cherry-accent-dark border-2 border-transparent active:scale-95 text-center flex items-center justify-center gap-1.5 text-sm md:text-base">
+                <i class="fa-solid fa-house text-xs md:text-sm"></i>首頁
+            </button>
+            <button id="nav-prices" class="py-3.5 md:py-4 px-2 md:px-6 rounded-2xl bg-white text-cherry-text font-medium shadow-sm transition-all duration-300 hover:border-cherry-accent border-2 border-cherry-border active:scale-95 text-center flex items-center justify-center gap-1.5 text-sm md:text-base">
+                <i class="fa-solid fa-images text-xs md:text-sm"></i>價目表
+            </button>
+            <a href="https://ichigokoomeii.github.io/watame-shop/" target="_blank" class="py-3.5 md:py-4 px-2 md:px-6 rounded-2xl bg-white text-cherry-text font-medium shadow-sm transition-all duration-300 hover:border-cherry-accent border-2 border-cherry-border active:scale-95 text-center flex items-center justify-center gap-1.5 text-sm md:text-base">
+                <i class="fa-solid fa-shop text-xs md:text-sm"></i>批發服設
+            </a>
+        </div>
+
+        <div class="mt-8 text-center animate-hint">
+            <p class="text-xs md:text-sm font-semibold text-cherry-text/80 tracking-widest">
+                🍓 點擊右下角的小草莓可以開啟更多社群連結唷！
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // --- 右下角浮動選單邏輯 ---
+        const menuBtn = document.getElementById('strawberryMenuBtn');
+        const snsContainer = document.getElementById('snsLinkContainer');
+        let isMenuOpen = false;
+
+        menuBtn.addEventListener('click', () => {
+            isMenuOpen = !isMenuOpen;
+            if (isMenuOpen) {
+                snsContainer.classList.remove('opacity-0', 'scale-75', 'translate-y-4', 'pointer-events-none');
+                snsContainer.classList.add('opacity-100', 'scale-100', 'translate-y-0');
+            } else {
+                snsContainer.classList.add('opacity-0', 'scale-75', 'translate-y-4', 'pointer-events-none');
+                snsContainer.classList.remove('opacity-100', 'scale-100', 'translate-y-0');
+            }
+        });
+
+        // --- 分頁切換邏輯 ---
+        const pageHome = document.getElementById('page-home');
+        const pagePrices = document.getElementById('page-prices');
+        const homeBgLayer = document.getElementById('home-bg-layer');
+        const btnNavHome = document.getElementById('nav-home');
+        const btnNavPrices = document.getElementById('nav-prices');
+
+        function updateNavStyles(activeBtn) {
+            [btnNavHome, btnNavPrices].forEach(btn => {
+                btn.classList.remove('bg-cherry-accent', 'text-white', 'hover:bg-cherry-accent-dark', 'border-transparent');
+                btn.classList.add('bg-white', 'text-cherry-text', 'border-cherry-border', 'hover:border-cherry-accent');
+            });
+            activeBtn.classList.remove('bg-white', 'text-cherry-text', 'border-cherry-border', 'hover:border-cherry-accent');
+            activeBtn.classList.add('bg-cherry-accent', 'text-white', 'hover:bg-cherry-accent-dark', 'border-transparent');
+        }
+
+        btnNavHome.addEventListener('click', () => {
+            pagePrices.classList.add('hidden');
+            pagePrices.classList.remove('flex');
+            pageHome.classList.remove('hidden');
+            pageHome.classList.add('flex');
+            homeBgLayer.style.display = 'block';
+            updateNavStyles(btnNavHome);
+            stopCarousel();
+        });
+
+        btnNavPrices.addEventListener('click', () => {
+            pageHome.classList.add('hidden');
+            pageHome.classList.remove('flex');
+            pagePrices.classList.remove('hidden');
+            pagePrices.classList.add('flex');
+            homeBgLayer.style.display = 'none';
+            updateNavStyles(btnNavPrices);
+            currentSlide = 0;
+            moveSlide(0);
+            startCarousel();
+        });
+
+        // --- 價目表輪播跑馬燈邏輯 ---
+        const track = document.getElementById('carouselTrack');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const dots = document.querySelectorAll('#carouselDots span');
+        const totalSlides = 6;
+        let currentSlide = 0;
+        let carouselInterval = null;
+        const slideDuration = 5000;
+
+        function moveSlide(index) {
+            if (index >= totalSlides) currentSlide = 0;
+            else if (index < 0) currentSlide = totalSlides - 1;
+            else currentSlide = index;
+
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            dots.forEach((dot, idx) => {
+                if (idx === currentSlide) {
+                    dot.classList.remove('bg-cherry-border');
+                    dot.classList.add('bg-cherry-accent', 'scale-125');
+                } else {
+                    dot.classList.remove('bg-cherry-accent', 'scale-125');
+                    dot.classList.add('bg-cherry-border');
+                }
+            });
+        }
+
+        function startCarousel() {
+            stopCarousel();
+            carouselInterval = setInterval(() => {
+                moveSlide(currentSlide + 1);
+            }, slideDuration);
+        }
+
+        function stopCarousel() {
+            if (carouselInterval) {
+                clearInterval(carouselInterval);
+            }
+        }
+
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            moveSlide(currentSlide + 1);
+            startCarousel();
+        });
+
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            moveSlide(currentSlide - 1);
+            startCarousel();
+        });
+
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const idx = parseInt(dot.getAttribute('data-index'));
+                moveSlide(idx);
+                startCarousel();
+            });
+        });
+    </script>
+</body>
+</html>
