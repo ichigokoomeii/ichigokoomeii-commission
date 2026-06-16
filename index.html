@@ -153,11 +153,20 @@
             transition: transform 0.5s ease-in-out;
             height: 100%;
             touch-action: pan-y;
+            cursor: grab; /* 讓滑鼠移上去時顯示可抓取的滑鼠指針樣式 */
+        }
+        .carousel-track:active {
+            cursor: grabbing; /* 按住拖曳時顯示抓取中的手勢 */
         }
         .carousel-slide {
             flex: 0 0 100%;
             width: 100%;
             height: 100%;
+        }
+        /* 防止滑鼠拖曳時瀏覽器預設的選取或拖曳圖片行為破壞手勢 */
+        .carousel-slide img {
+            user-select: none;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -381,42 +390,59 @@
             });
         });
 
-        // --- 手機板滑動（Swipe）功能（相容 iOS 放大） ---
-        // let touchStartX = 0;
-        // let touchStartY = 0;
-        // let touchEndX = 0;
-        // let touchEndY = 0;
+        // --- 電腦版滑動（Mouse Drag）與手機板滑動（Swipe）整合功能 ---
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
 
-        // track.addEventListener('touchstart', (e) => {
-        //     if (e.touches.length > 1) return;
-        //     touchStartX = e.touches[0].clientX;
-        //     touchStartY = e.touches[0].clientY;
-        //     stopCarousel(); 
-        // }, { passive: true });
+        // 統一取得座標的輔助函式
+        const getClientX = (e) => e.touches ? e.touches[0].clientX : e.clientX;
+        const getClientY = (e) => e.touches ? e.touches[0].clientY : e.clientY;
 
-        // track.addEventListener('touchend', (e) => {
-        //     if (e.touches.length > 0) return;
-        //     touchEndX = e.changedTouches[0].clientX;
-        //     touchEndY = e.changedTouches[0].clientY;
-        //     handleSwipe();
-        // }, { passive: true });
+        function handleDragStart(e) {
+            // 如果是多指觸控則不處理
+            if (e.touches && e.touches.length > 1) return;
+            
+            isDragging = true;
+            startX = getClientX(e);
+            startY = getClientY(e);
+            stopCarousel(); 
+        }
 
-        // function handleSwipe() {
-        //     const swipeThreshold = 50; 
-        //     const diffX = touchStartX - touchEndX;
-        //     const diffY = touchStartY - touchEndY;
+        function handleDragEnd(e) {
+            if (!isDragging) return;
+            isDragging = false;
 
-        //     if (Math.abs(diffX) > Math.abs(diffY)) {
-        //         if (Math.abs(diffX) > swipeThreshold) {
-        //             if (diffX > 0) {
-        //                 moveSlide(currentSlide + 1);
-        //             } else {
-        //                 moveSlide(currentSlide - 1);
-        //             }
-        //         }
-        //     }
-        //     startCarousel(); 
-        // }
+            // 取得結束時的座標（相容觸控事件與一般滑鼠事件）
+            const endX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+            const endY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+
+            const swipeThreshold = 50; 
+            const diffX = startX - endX;
+            const diffY = startY - endY;
+
+            // 確保水平拖曳幅度大於垂直拖曳（避免干擾滾動網頁）
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (Math.abs(diffX) > swipeThreshold) {
+                    if (diffX > 0) {
+                        moveSlide(currentSlide + 1);
+                    } else {
+                        moveSlide(currentSlide - 1);
+                    }
+                }
+            }
+            startCarousel(); 
+        }
+
+        // 監聽手機觸控事件
+        track.addEventListener('touchstart', handleDragStart, { passive: true });
+        track.addEventListener('touchend', handleDragEnd, { passive: true });
+
+        // 監聽電腦滑鼠點擊拖曳事件
+        track.addEventListener('mousedown', handleDragStart);
+        track.addEventListener('mouseup', handleDragEnd);
+        // 如果滑鼠按住移出圖片範圍，也視同結束拖曳
+        track.addEventListener('mouseleave', handleDragEnd);
     </script>
 </body>
 </html>
