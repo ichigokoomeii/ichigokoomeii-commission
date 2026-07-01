@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/cwtexyen.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -20,7 +21,7 @@
                         'cherry-accent': '#FF94A2',  /* 暖櫻粉按鈕 */
                         'cherry-accent-dark': '#E27483',
                         'cherry-text': '#7A4F55',    /* 濃可可莓果文字 */
-                        'deco-pink': '#FFE3E7',    
+                        'deco-pink': '#FFE3E7',     
                     },
                     fontFamily: { 
                         sans: ['"cwTeXYen"', '"Microsoft JhengHei"', 'sans-serif'] 
@@ -67,15 +68,11 @@
             padding-top: 1rem;
             padding-bottom: 1rem;
             min-height: 400px;
-            @media (min-width: 768px) {
+        }
+        @media (min-width: 768px) {
+            .ticket-card {
                 min-height: 600px; /* 大幅撐高大卡片容納超大圖 */
             }
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border-radius: 4px;
-            overflow: visible; 
         }
 
         /* 頂部與底部的純 CSS 圓弧波浪鋸齒效果 */
@@ -111,9 +108,7 @@
                 linear-gradient(to left, #F3D1D6 3px, transparent 3px);
         }
 
-        /* ========================================================== */
         /* 首頁底圖響應式調整 */
-        /* ========================================================== */
         .ticket-home-bg {
             position: absolute;
             top: 0;
@@ -125,20 +120,16 @@
             opacity: 0.35;
             z-index: 1;
             border-radius: 4px;
-
-            /* 預設：手機直向版 (Mobile) */
-            background-size: cover;          /* 滿版覆蓋 */
-            background-position: 140px 30%; /* 微調水平與垂直偏移 */
+            background-size: cover;          
+            background-position: 140px 30%; 
         }
 
-        /* 桌面電腦版 (Desktop寬螢幕) */
         @media (min-width: 768px) {
             .ticket-home-bg {
-                background-size: 115%;           /* 電腦版稍微放大 */
-                background-position: 140px 25%;  /* 微調水平與垂直偏移 */
+                background-size: 115%;           
+                background-position: 140px 25%;  
             }
         }
-        /* ========================================================== */
 
         .ticket-content {
             position: relative;
@@ -154,20 +145,30 @@
             height: 100%;
             touch-action: pan-y pinch-zoom;
             will-change: transform;
-            cursor: grab; /* 讓滑鼠移上去時顯示可抓取的滑鼠指針樣式 */
+            cursor: grab; 
         }
         .carousel-track:active {
-            cursor: grabbing; /* 按住拖曳時顯示抓取中的手勢 */
+            cursor: grabbing; 
         }
         .carousel-slide {
             flex: 0 0 100%;
             width: 100%;
             height: 100%;
         }
-        /* 防止滑鼠拖曳時瀏覽器預設的選取或拖曳圖片行為破壞手勢 */
         .carousel-slide img {
             user-select: none;
-            pointer-events: none;
+            -webkit-user-drag: none;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        /* 讓 Panzoom 縮放容器完美置中與設定鼠標 */
+        #panzoomWrapper {
+            cursor: move;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s ease-out;
         }
     </style>
 </head>
@@ -205,19 +206,14 @@
     </div>
 
     <div class="max-w-[850px] w-full fade-in relative z-10 mb-8 px-1 md:px-4"> 
-        
-        <div class="ticket-card bg-white">
+        <div class="ticket-card bg-white flex flex-col justify-center items-center overflow-visible rounded-sm">
             <div id="home-bg-layer" class="ticket-home-bg"></div>
 
             <div id="page-home" class="ticket-content w-full flex flex-col items-center justify-center text-center p-6 min-h-[300px] md:min-h-[450px]">
                 <div class="space-y-4 bg-white/70 backdrop-blur-[2px] p-6 md:p-8 rounded-3xl border border-white/50 max-w-[90%] md:max-w-[70%] shadow-sm">
-                    <h1 class="text-3xl md:text-5xl font-bold tracking-wider text-cherry-text drop-shadow-sm">
-                        小莓奶糖
-                    </h1>
+                    <h1 class="text-3xl md:text-5xl font-bold tracking-wider text-cherry-text drop-shadow-sm">小莓奶糖</h1>
                     <div class="w-20 h-[3px] bg-cherry-accent mx-auto my-3 rounded-full"></div>
-                    <p class="text-lg md:text-2xl font-semibold tracking-widest text-cherry-text/90 uppercase">
-                        COMMISSION
-                    </p>
+                    <p class="text-lg md:text-2xl font-semibold tracking-widest text-cherry-text/90 uppercase">COMMISSION</p>
                 </div>
                 <div class="mt-8 text-cherry-accent opacity-60 text-3xl animate-flower">
                     <i class="fa-solid fa-asterisk"></i>
@@ -276,6 +272,31 @@
             <p class="text-xs md:text-sm font-semibold text-cherry-text/80 tracking-widest">
                 🍓 點擊右下角的小草莓可以開啟更多社群觀看作品呦！
             </p>
+        </div>
+    </div>
+
+    <div id="lightboxOverlay" class="fixed inset-0 bg-black/90 opacity-0 pointer-events-none transition-opacity duration-300 z-[10000] flex items-center justify-center select-none">
+        
+        <div class="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-2.5 z-[10005]">
+            <button id="zoomInBtn" class="w-11 h-11 bg-white/10 hover:bg-white/20 active:scale-90 text-white rounded-xl flex items-center justify-center text-lg transition-all backdrop-blur-md border border-white/10 shadow-lg" title="放大">
+                <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </button>
+            <button id="zoomOutBtn" class="w-11 h-11 bg-white/10 hover:bg-white/20 active:scale-90 text-white rounded-xl flex items-center justify-center text-lg transition-all backdrop-blur-md border border-white/10 shadow-lg" title="縮小">
+                <i class="fa-solid fa-magnifying-glass-minus"></i>
+            </button>
+            <button id="lightboxClose" class="w-11 h-11 bg-red-500/20 hover:bg-red-500/40 active:scale-90 text-red-300 hover:text-white rounded-xl flex items-center justify-center text-lg transition-all backdrop-blur-md border border-red-500/20 shadow-lg font-bold" title="關閉">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div id="zoomRatioTag" class="absolute bottom-5 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-black/60 text-white/90 text-xs rounded-full font-mono tracking-wider backdrop-blur-sm pointer-events-none transition-opacity duration-200 opacity-0 z-[10005]">
+            1.0x
+        </div>
+
+        <div id="panzoomContainer" class="w-full h-full flex items-center justify-center p-2 md:p-6 overflow-hidden">
+            <div id="panzoomWrapper" class="w-full h-full flex items-center justify-center">
+                <img id="lightboxImg" src="" alt="放大價目表" class="max-w-[95%] max-h-[85vh] object-contain shadow-2xl rounded-sm">
+            </div>
         </div>
     </div>
 
@@ -395,22 +416,21 @@
             });
         });
 
-        // --- 電腦版滑動（Mouse Drag）與手機板滑動（Swipe）整合功能 ---
+        // --- 滑動與手機板滑動功能 ---
         let isDragging = false;
         let startX = 0;
         let startY = 0;
+        let startTime = 0; 
 
-        // 統一取得座標的輔助函式
         const getClientX = (e) => e.touches ? e.touches[0].clientX : e.clientX;
         const getClientY = (e) => e.touches ? e.touches[0].clientY : e.clientY;
 
         function handleDragStart(e) {
-            // 如果是多指觸控則不處理
             if (e.touches && e.touches.length > 1) return;
-            
             isDragging = true;
             startX = getClientX(e);
             startY = getClientY(e);
+            startTime = Date.now(); 
             stopCarousel(); 
         }
 
@@ -418,36 +438,139 @@
             if (!isDragging) return;
             isDragging = false;
 
-            // 取得結束時的座標（相容觸控事件與一般滑鼠事件）
             const endX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
             const endY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
 
             const swipeThreshold = 50; 
             const diffX = startX - endX;
             const diffY = startY - endY;
+            const duration = Date.now() - startTime;
 
-            // 確保水平拖曳幅度大於垂直拖曳（避免干擾滾動網頁）
+            if (Math.abs(diffX) < 10 && Math.abs(diffY) < 10 && duration < 250) {
+                const currentImg = track.children[currentSlide].querySelector('img');
+                if (currentImg) {
+                    openLightbox(currentImg.src);
+                }
+                startCarousel();
+                return;
+            }
+
             if (Math.abs(diffX) > Math.abs(diffY)) {
                 if (Math.abs(diffX) > swipeThreshold) {
-                    if (diffX > 0) {
-                        moveSlide(currentSlide + 1);
-                    } else {
-                        moveSlide(currentSlide - 1);
-                    }
+                    if (diffX > 0) moveSlide(currentSlide + 1);
+                    else moveSlide(currentSlide - 1);
                 }
             }
             startCarousel(); 
         }
 
-        // 監聽手機觸控事件
         track.addEventListener('touchstart', handleDragStart, { passive: true });
         track.addEventListener('touchend', handleDragEnd, { passive: true });
-
-        // 監聽電腦滑鼠點擊拖曳事件
         track.addEventListener('mousedown', handleDragStart);
         track.addEventListener('mouseup', handleDragEnd);
-        // 如果滑鼠按住移出圖片範圍，也視同結束拖曳
         track.addEventListener('mouseleave', handleDragEnd);
+
+
+        // ===================================================
+        // 核心修正：進階全螢幕燈箱（完美解決對齊與過大跑位問題）
+        // ===================================================
+        const lightboxOverlay = document.getElementById('lightboxOverlay');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const lightboxClose = document.getElementById('lightboxClose');
+        const zoomInBtn = document.getElementById('zoomInBtn');
+        const zoomOutBtn = document.getElementById('zoomOutBtn');
+        const zoomRatioTag = document.getElementById('zoomRatioTag');
+        const panzoomContainer = document.getElementById('panzoomContainer');
+        const panzoomWrapper = document.getElementById('panzoomWrapper');
+        
+        let pzInstance = null;
+
+        function initPanzoom() {
+            if (pzInstance) pzInstance.destroy();
+
+            // 改為綁定在外層的 Wrapper 上，使內部的圖片樣式不會被套件干擾導致拉伸
+            pzInstance = Panzoom(panzoomWrapper, {
+                maxScale: 4,        
+                minScale: 1,        
+                contain: 'outside', 
+                cursor: 'move'      
+            });
+
+            // 監聽滑鼠滾輪縮放
+            panzoomContainer.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                pzInstance.zoomWithWheel(e);
+            }, { passive: false });
+
+            // 同步比例小標籤
+            panzoomWrapper.addEventListener('panzoomchange', (e) => {
+                const currentScale = e.detail.scale.toFixed(1);
+                zoomRatioTag.textContent = `${currentScale}x`;
+                
+                if (parseFloat(currentScale) > 1.0) {
+                    zoomRatioTag.style.opacity = '1';
+                } else {
+                    zoomRatioTag.style.opacity = '0';
+                }
+            });
+        }
+
+        function openLightbox(imgSrc) {
+            stopCarousel(); 
+            lightboxImg.src = imgSrc;
+            
+            lightboxOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            lightboxOverlay.classList.add('opacity-100', 'pointer-events-auto');
+
+            // 核心修正點：確保圖片完全載入後再初始化，並執行 Reset & Resize 來完美校正中心點
+            lightboxImg.onload = () => {
+                initPanzoom();
+                setTimeout(() => {
+                    if (pzInstance) {
+                        pzInstance.reset({ animate: false });
+                        pzInstance.setStyle(panzoomWrapper, 'transformOrigin', 'center center');
+                    }
+                }, 50);
+            };
+        }
+
+        function closeLightbox() {
+            lightboxOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+            lightboxOverlay.classList.add('opacity-0', 'pointer-events-none');
+            zoomRatioTag.style.opacity = '0';
+
+            setTimeout(() => {
+                if (pzInstance) {
+                    pzInstance.reset({ animate: false });
+                    pzInstance.destroy();
+                    pzInstance = null;
+                }
+                lightboxImg.src = ''; 
+            }, 300);
+
+            startCarousel(); 
+        }
+
+        zoomInBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (pzInstance) pzInstance.zoomIn();
+        });
+
+        zoomOutBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (pzInstance) pzInstance.zoomOut();
+        });
+
+        lightboxClose.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightboxOverlay.addEventListener('click', (e) => {
+            if (e.target === lightboxOverlay || e.target === panzoomContainer || e.target === panzoomWrapper) {
+                closeLightbox();
+            }
+        });
     </script>
 </body>
 </html>
